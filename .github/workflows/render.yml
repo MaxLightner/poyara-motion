@@ -1,0 +1,49 @@
+name: Render MP4
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      post:
+        description: JSON file inside posts/ (committed to this repository)
+        default: sample.json
+        required: true
+      format:
+        type: choice
+        options: [square, portrait]
+        default: square
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      POST: ${{ inputs.post || 'sample.json' }}
+      FORMAT: ${{ inputs.format || 'square' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check && npm test && npm run build
+      - name: Validate input filename
+        shell: bash
+        run: |
+          [[ "$POST" =~ ^[a-zA-Z0-9_-]+\.json$ ]] || exit 1
+          test -f "posts/$POST"
+      - run: npx remotion browser ensure
+      - name: Render video
+        run: npm run render -- "posts/$POST" "$FORMAT" out/poyara.mp4
+      - name: Verify video
+        run: |
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,pix_fmt -show_entries format=duration -of json out/poyara.mp4
+          test -s out/poyara.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: poyara-${{ env.FORMAT }}-mp4
+          path: out/poyara.mp4
+          if-no-files-found: error
+          retention-days: 30

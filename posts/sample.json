@@ -1,0 +1,9 @@
+{
+  "direction": "ltr",
+  "footer": "Ideas into motion.",
+  "scenes": [
+    {"layout": "statement", "eyebrow": "A SMALL START", "title": "One idea.\nA little motion.", "body": "A simple way to share what we are learning.", "duration": 4},
+    {"layout": "steps", "eyebrow": "KEEP IT SIMPLE", "title": "Start small.\nMake it clear.", "items": ["Choose one idea", "Tell a short story", "Share and learn"], "duration": 5},
+    {"layout": "statement", "eyebrow": "POYARA", "title": "What are you\nlearning today?", "body": "A note, a question, a small discovery.", "duration": 4}
+  ]
+}
