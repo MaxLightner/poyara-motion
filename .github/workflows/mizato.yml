@@ -1,0 +1,53 @@
+name: Render Mizato Explainer
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/mizato.tsx'
+      - 'src/index.tsx'
+      - 'scripts/music.mjs'
+      - '.github/workflows/mizato.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Font setup
+        run: sudo apt-get update -qq && sudo apt-get install -y fonts-noto-core
+      - run: npm ci
+      - name: Generate soundtrack
+        run: node scripts/music.mjs
+      - name: Check TypeScript and existing tests
+        run: npm run check && npm test
+      - run: npx remotion browser ensure
+      - name: Render 50-second Mizato explainer in Full HD
+        run: npx remotion render src/index.tsx MizatoExplainer out/mizato-explainer.mp4 --codec=h264 --pixel-format=yuv420p --crf=20 --concurrency=2 --log=error
+      - name: Render proof frame
+        run: npx remotion still src/index.tsx MizatoExplainer out/mizato-frame.png --frame=540 --log=error
+      - name: Check MP4 exists
+        run: test -s out/mizato-explainer.mp4 && test -s out/mizato-frame.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mizato-explainer-1080p
+          path: |
+            out/mizato-explainer.mp4
+            out/mizato-frame.png
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish MP4 as release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view mizato-preview-v1 >/dev/null 2>&1; then
+            gh release upload mizato-preview-v1 out/mizato-explainer.mp4#Mizato-Explainer.mp4 out/mizato-frame.png#Mizato-Preview.png --clobber
+          else
+            gh release create mizato-preview-v1 out/mizato-explainer.mp4#Mizato-Explainer.mp4 out/mizato-frame.png#Mizato-Preview.png --title 'Mizato Explainer — Remotion Preview v1' --notes '50-second FHD Persian restaurant ordering explainer, generated with Remotion. Visual demo with original instrumental backing, no recorded voiceover.'
+          fi
