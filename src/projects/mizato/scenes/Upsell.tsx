@@ -1,5 +1,5 @@
 import React from 'react';
-import {s} from '../../../core/animation/easing';
+import {s,pulse} from '../../../core/animation/easing';
 import {Glass} from '../../../core/components/Glass';
 import {PersianText as Text} from '../../../core/typography/PersianText';
 import {Tag} from '../components/Overlays';
