@@ -1,0 +1,66 @@
+name: Render Mizato Continuous Flow V2
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/projects/mizato/scenes/Flow.tsx'
+      - 'src/projects/mizato/flow-script.json'
+      - 'src/index.tsx'
+      - 'src/core/**'
+      - 'scripts/flow-music.mjs'
+      - '.github/workflows/mizato-flow.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Font setup
+        run: sudo apt-get update -qq && sudo apt-get install -y fonts-noto-core
+      - run: npm ci
+      - run: npm run check && npm test && npm run build
+      - name: Generate original music
+        run: node scripts/flow-music.mjs
+      - run: npx remotion browser ensure
+      - name: Render full HD 63-second continuous film
+        run: npx remotion render src/index.tsx MizatoFlow out/mizato-flow-v2.mp4 --codec=h264 --pixel-format=yuv420p --crf=20 --concurrency=2 --log=error
+      - name: Render frame samples for review
+        run: |
+          npx remotion still src/index.tsx MizatoFlow out/qr.png --frame=310 --log=error
+          npx remotion still src/index.tsx MizatoFlow out/notification.png --frame=730 --log=error
+          npx remotion still src/index.tsx MizatoFlow out/tracking.png --frame=1090 --log=error
+          npx remotion still src/index.tsx MizatoFlow out/manager.png --frame=1570 --log=error
+      - name: Verify files exist and contain data
+        run: |
+          test -s out/mizato-flow-v2.mp4
+          test -s out/qr.png
+          test -s out/notification.png
+          test -s out/tracking.png
+          test -s out/manager.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mizato-flow-v2-full-hd
+          path: |
+            out/mizato-flow-v2.mp4
+            out/qr.png
+            out/notification.png
+            out/tracking.png
+            out/manager.png
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish V2 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view mizato-flow-v2 >/dev/null 2>&1; then
+            gh release upload mizato-flow-v2 out/mizato-flow-v2.mp4 out/qr.png out/notification.png out/tracking.png out/manager.png --clobber
+          else
+            gh release create mizato-flow-v2 out/mizato-flow-v2.mp4 out/qr.png out/notification.png out/tracking.png out/manager.png --title 'Mizato — Continuous Flow V2' --notes '63-second, 1920x1080 Remotion explainer. No hard slide cuts. Customer journey, waiter notification, kitchen confirmation, live-status UI mock, customer feedback and manager controls. Persian on-screen messages + original synthesized instrumental. No narration; sample UI is illustrative.'
+          fi

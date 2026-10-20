@@ -20,6 +20,8 @@ jobs:
       - name: Generate demo audio
         run: node scripts/music.mjs
       - run: npx remotion browser ensure
+      - name: Generate continuous-flow soundtrack
+        run: node scripts/flow-music.mjs
       - name: Smoke render beginning, middle, and final scenes
         run: |
           mkdir -p out
@@ -27,10 +29,13 @@ jobs:
           npx remotion still src/index.tsx MizatoExplainer out/scene-compare.png --frame=550 --log=error
           npx remotion still src/index.tsx MizatoExplainer out/scene-service.png --frame=1120 --log=error
           npx remotion still src/index.tsx MizatoExplainer out/scene-final.png --frame=1430 --log=error
-          test -s out/scene-opening.png && test -s out/scene-compare.png && test -s out/scene-service.png && test -s out/scene-final.png
+          npx remotion still src/index.tsx MizatoFlow out/flow-waiter.png --frame=745 --log=error
+          npx remotion still src/index.tsx MizatoFlow out/flow-tracking.png --frame=1070 --log=error
+          npx remotion still src/index.tsx MizatoFlow out/flow-manager.png --frame=1580 --log=error
+          test -s out/scene-opening.png && test -s out/scene-compare.png && test -s out/scene-service.png && test -s out/scene-final.png && test -s out/flow-waiter.png && test -s out/flow-tracking.png && test -s out/flow-manager.png
       - uses: actions/upload-artifact@v4
         with:
           name: refactor-scene-smoke-frames
-          path: out/scene-*.png
+          path: out/*.png
           if-no-files-found: error
           retention-days: 7
