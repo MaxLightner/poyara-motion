@@ -9,5 +9,6 @@ postSchema.parse(JSON.parse(readFileSync(resolve(input), 'utf8')));
 mkdirSync(resolve(output, '..'), {recursive: true});
 const cli = resolve('node_modules/@remotion/cli/remotion-cli.js');
 if (!existsSync(cli)) throw new Error('Run npm ci first');
-const result = spawnSync(process.execPath, [cli, 'render', 'src/index.tsx', format === 'square' ? 'PoyaraSquare' : 'PoyaraPortrait', resolve(output), `--props=${resolve(input)}`, '--codec=h264', '--pixel-format=yuv420p', '--crf=18', '--concurrency=2'], {stdio:'inherit'});
+const browser = process.env.REMOTION_BROWSER_EXECUTABLE;
+const result = spawnSync(process.execPath, [cli, 'render', 'src/index.tsx', format === 'square' ? 'PoyaraSquare' : 'PoyaraPortrait', resolve(output), `--props=${resolve(input)}`, '--codec=h264', '--pixel-format=yuv420p', '--crf=18', '--concurrency=2', ...(browser ? [`--browser-executable=${browser}`] : [])], {stdio:'inherit'});
 process.exit(result.status ?? 1);
