@@ -1,0 +1,36 @@
+name: Validate Motion Engine
+on:
+  pull_request:
+  push:
+    branches: ['refactor/**']
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check && npm test && npm run build
+      - name: Generate demo audio
+        run: node scripts/music.mjs
+      - run: npx remotion browser ensure
+      - name: Smoke render beginning, middle, and final scenes
+        run: |
+          mkdir -p out
+          npx remotion still src/index.tsx MizatoExplainer out/scene-opening.png --frame=75 --log=error
+          npx remotion still src/index.tsx MizatoExplainer out/scene-compare.png --frame=550 --log=error
+          npx remotion still src/index.tsx MizatoExplainer out/scene-service.png --frame=1120 --log=error
+          npx remotion still src/index.tsx MizatoExplainer out/scene-final.png --frame=1430 --log=error
+          test -s out/scene-opening.png && test -s out/scene-compare.png && test -s out/scene-service.png && test -s out/scene-final.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: refactor-scene-smoke-frames
+          path: out/scene-*.png
+          if-no-files-found: error
+          retention-days: 7

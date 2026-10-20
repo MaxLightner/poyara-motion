@@ -2,10 +2,19 @@ name: Render MP4
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/core/**'
+      - 'src/projects/poyara/**'
+      - 'src/index.tsx'
+      - 'scripts/render.mjs'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/render.yml'
   workflow_dispatch:
     inputs:
       post:
-        description: JSON file inside posts/ (committed to this repository)
+        description: JSON filename inside src/projects/poyara/posts/
         default: sample.json
         required: true
       format:
@@ -33,12 +42,12 @@ jobs:
         shell: bash
         run: |
           [[ "$POST" =~ ^[a-zA-Z0-9_-]+\.json$ ]] || exit 1
-          test -f "posts/$POST"
+          test -f "src/projects/poyara/posts/$POST"
       - run: npx remotion browser ensure
       - name: Render video
-        run: npm run render -- "posts/$POST" "$FORMAT" out/poyara.mp4
+        run: npm run render -- "src/projects/poyara/posts/$POST" "$FORMAT" out/poyara.mp4
       - name: Verify video
-        run: node scripts/verify.mjs out/poyara.mp4 "posts/$POST" "$FORMAT"
+        run: node scripts/verify.mjs out/poyara.mp4 "src/projects/poyara/posts/$POST" "$FORMAT"
       - uses: actions/upload-artifact@v4
         with:
           name: poyara-${{ env.FORMAT }}-mp4
