@@ -3,9 +3,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/mizato.tsx'
+      - 'src/core/**'
+      - 'src/projects/mizato/**'
       - 'src/index.tsx'
       - 'scripts/music.mjs'
+      - 'scripts/render-project.mjs'
       - '.github/workflows/mizato.yml'
   workflow_dispatch:
 permissions:
@@ -26,7 +28,7 @@ jobs:
       - name: Generate soundtrack
         run: node scripts/music.mjs
       - name: Check TypeScript and existing tests
-        run: npm run check && npm test
+        run: npm run check && npm test && npm run build
       - run: npx remotion browser ensure
       - name: Render 50-second Mizato explainer in Full HD
         run: npx remotion render src/index.tsx MizatoExplainer out/mizato-explainer.mp4 --codec=h264 --pixel-format=yuv420p --crf=20 --concurrency=2 --log=error
@@ -49,5 +51,5 @@ jobs:
           if gh release view mizato-preview-v1 >/dev/null 2>&1; then
             gh release upload mizato-preview-v1 out/mizato-explainer.mp4#Mizato-Explainer.mp4 out/mizato-frame.png#Mizato-Preview.png --clobber
           else
-            gh release create mizato-preview-v1 out/mizato-explainer.mp4#Mizato-Explainer.mp4 out/mizato-frame.png#Mizato-Preview.png --title 'Mizato Explainer — Remotion Preview v1' --notes '50-second FHD Persian restaurant ordering explainer, generated with Remotion. Visual demo with original instrumental backing, no recorded voiceover.'
+            gh release create mizato-preview-v1 out/mizato-explainer.mp4#Mizato-Explainer.mp4 out/mizato-frame.png#Mizato-Preview.png --title 'Mizato Explainer — Remotion Preview v1' --notes '50-second FHD Persian ordering explainer, Remotion + instrumental music. No narrated voiceover.'
           fi

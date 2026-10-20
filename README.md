@@ -1,56 +1,71 @@
-# POYARA Motion
+# POYARA Motion — multi-product Remotion engine
 
-Minimal, JSON-driven LinkedIn motion graphics. Charcoal, warm copper and off-white styling follows the POYARA website draft. Two reusable layouts (`statement`, `steps`), two sizes: 1080×1080 and 1080×1350, 30 fps, silent H.264 MP4. No product screenshots, product names, roadmap details or external assets.
+Reusable motion graphics repository for **Mizato, POYARA, Chido and Kamcheh**, currently with production compositions for Mizato and POYARA only. The visuals are Remotion/React/TypeScript; GitHub Actions renders MP4.
 
-## Quick start
+## Repository map
 
-Node.js 22 recommended.
+```
+src/
+├── core/
+│   ├── animation/        # deterministic frame easing / pulses
+│   ├── components/       # reusable Glass and MobileDevice
+│   ├── typography/       # Persian/RTL font fallback and Text
+│   └── audio/            # reusable soundtrack component
+├── projects/
+│   ├── mizato/
+│   │   ├── scenes/       # six individually animated scenes + Film timeline
+│   │   ├── components/   # menu UI, restaurant, QR, waiter and food
+│   │   ├── assets/       # product asset conventions
+│   │   ├── audio/        # original music generator
+│   │   ├── theme.ts
+│   │   └── script.json   # editable timings, captions, scene order
+│   ├── poyara/           # JSON-driven LinkedIn templates
+│   ├── chido/            # reserved boundary; no video yet
+│   └── kamcheh/          # reserved boundary; no video yet
+├── index.tsx             # composition registry
+└── {mizato,motion,schema}.*  # compatibility imports
+scripts/                  # stable CLI and compatibility commands
+tests/                    # schema/timing/structure tests
+render/                   # output conventions; actual MP4s in ignored out/
+```
+
+## Setup
+
+Node 22 recommended.
 
 ```sh
 npm ci
-npm run studio
-npm run check
-npm test
-npm run build
-npm run render
-npm run render -- posts/persian.json portrait out/poyara-persian.mp4
-```
-
-Edit `posts/sample.json` or copy it to another JSON file. Scene duration controls the full timeline automatically. Use `direction: "rtl"` for Persian; the default font is system Arial. Preview long copy in Studio before posting. The examples contain generic learning prompts only. The initial version has no soundtrack.
-
-## Download an MP4 without installing anything
-
-[Download the 13-second sample MP4](https://github.com/MaxLightner/poyara-motion/raw/refs/heads/main/samples/poyara-sample.mp4).
-
-Open **Actions → Render MP4 → Run workflow**, select the JSON filename and square/portrait. Once the run succeeds, open **Artifacts** and download the MP4 ZIP (GitHub sign-in may be required). Every push to main also renders the sample. Artifacts expire after 30 days; download before expiry or run again.
-
-GitHub stores the project; Remotion runs inside GitHub Actions to turn its code and JSON into a video. No separate Remotion account or hosted editor is needed for this workflow.
-
-## Later automation
-
-DeepSeek or n8n can generate the same JSON structure, validate it with `postSchema` in `src/schema.mjs`, commit a file under `posts/`, then trigger `workflow_dispatch` with `post` and `format`. This initial version deliberately makes no AI calls and needs no secrets. Review generated copy before committing: this repository and its Actions logs/artifacts are public. Never place unreleased product details or credentials here.
-
-The schema bounds text and duration and checks that steps contain items. Brand animation is in `src/motion.tsx`; composition sizing is in `src/index.tsx`. Rendering uses the [official Remotion CLI](https://www.remotion.dev/docs/render) and [JSON input props](https://www.remotion.dev/docs/options/props).
-
-Remotion has its own [license and commercial terms](https://www.remotion.dev/license); review them for your organization. No license is granted here for POYARA branding.
-
-## Mizato: restaurant ordering explainer (Remotion)
-
-The repository also includes **MizatoExplainer**, a self-contained **1920×1080 / 30 fps / 50-second** animated Persian explainer. This is not the POYARA typography template. It shows a stylized restaurant, a QR scan, a mobile food menu, visual meal comparison, a contextual drink/dessert suggestion, and the waiter's order approval before kitchen confirmation. Food illustrations, phone mockups and character/environment elements are composed with SVG and CSS in Remotion.
-
-The film includes original, generated instrumental music but **no recorded narration**. Copy and prices are illustrative demo content, not connected to the production Mizato backend. The QR pattern in the animation is decorative and is not a working table QR.
-
-To preview locally:
-```sh
-npm ci
+npm run check && npm test && npm run build
 node scripts/music.mjs
-npm run studio  # select MizatoExplainer
+npm run studio             # MizatoExplainer, PoyaraSquare, PoyaraPortrait
 ```
 
-To render a 1080p MP4:
+## Rendering
+
 ```sh
-node scripts/music.mjs
-npx remotion render src/index.tsx MizatoExplainer out/mizato-explainer.mp4 --codec=h264 --pixel-format=yuv420p
+npm run render:project -- mizato out/mizato-explainer.mp4 landscape
+npm run render:project -- poyara out/poyara.mp4 square src/projects/poyara/posts/sample.json
+npm run render:project -- poyara out/poyara-persian.mp4 portrait src/projects/poyara/posts/persian.json
 ```
 
-[Render Mizato Explainer workflow](https://github.com/MaxLightner/poyara-motion/actions/workflows/mizato.yml) builds the video, provides a full-HD artifact with a proof frame, and publishes the public `mizato-preview-v1` release. The existing POYARA post workflow remains unchanged.
+Legacy commands still work: `npm run render`, `npm run render -- posts/persian.json portrait out/poyara-persian.mp4`. New POYARA JSON files should live in `src/projects/poyara/posts/`; the renderer maps the old `posts/name.json` argument to the new location.
+
+## Mizato visual explainer
+
+50 seconds, 1920×1080, 30fps, 6 animated scenes. The film depicts QR menu discovery, side-by-side comparison, a contextual drink/dessert suggestion, and a waiter's confirmation flowing to kitchen review. Built from CSS/SVG and composited React elements. Music is original synthesized instrumental; **no recorded narration**. Demo items/prices are illustrative and not linked to the actual product backend. The displayed QR is decorative, not a live table QR.
+
+To edit timing or captions, change `src/projects/mizato/script.json`. Total composition frames follow that script. **Important:** each scene's choreography currently contains fixed local frame offsets, so changing duration considerably also requires reviewing the corresponding scene in `scenes/` and keeping the soundtrack duration in sync. This is a separated production layout, not yet a fully data-generated movie.
+
+[Mizato MP4 release](https://github.com/MaxLightner/poyara-motion/releases/tag/mizato-preview-v1) · [Mizato render workflow](https://github.com/MaxLightner/poyara-motion/actions/workflows/mizato.yml)
+
+## POYARA posts
+
+POYARA is JSON driven with `statement` and `steps` scenes. Use `direction: "rtl"` for Persian and the schema in `src/projects/poyara/schema.mjs`. Two output layouts are available: 1080×1080 and 1080×1350. Generic copy is used in the public examples and the template has no soundtrack.
+
+[13-second original sample MP4](https://github.com/MaxLightner/poyara-motion/raw/refs/heads/main/samples/poyara-sample.mp4) · [POYARA render workflow](https://github.com/MaxLightner/poyara-motion/actions/workflows/render.yml)
+
+## Automation and public repository security
+
+An agent/n8n can write POYARA post JSON, validate it, commit, and dispatch the render workflow. The Mizato film currently requires React scene code for new visual actions. Do not commit API keys, unreleased roadmap details, proprietary customer menus, or sensitive media: the repository, workflow logs and releases are public. Review Remotion's commercial license terms before production distribution.
+
+Generated videos go under ignored `out/` and are distributed as CI artifacts or GitHub releases, not stored alongside source code.

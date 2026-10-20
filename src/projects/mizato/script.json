@@ -1,0 +1,39 @@
+{
+  "project": "mizato",
+  "id": "MizatoExplainer",
+  "fps": 30,
+  "format": "landscape",
+  "audio": "mizato-bed.wav",
+  "scenes": [
+    {
+      "id": "opening",
+      "duration": 6,
+      "caption": "منوی کاغذی، انتخاب سخت و انتظار طولانی"
+    },
+    {
+      "id": "scan",
+      "duration": 7,
+      "caption": "یک اسکن؛ همه‌چیز روی گوشی مشتری"
+    },
+    {
+      "id": "compare",
+      "duration": 11,
+      "caption": "تصاویر جذاب و مقایسه برای انتخاب بهتر"
+    },
+    {
+      "id": "upsell",
+      "duration": 9,
+      "caption": "پیشنهاد هوشمند نوشیدنی و دسر"
+    },
+    {
+      "id": "service",
+      "duration": 11,
+      "caption": "ثبت دقیق سفارش، تأیید گارسون، ارسال به آشپزخانه"
+    },
+    {
+      "id": "final",
+      "duration": 6,
+      "caption": "میزاتو؛ از انتخاب تا سفارش"
+    }
+  ]
+}
