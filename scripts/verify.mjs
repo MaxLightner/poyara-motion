@@ -9,7 +9,8 @@ const metadata = await getVideoMetadata(resolve(file));
 assert.equal(metadata.width, 1080);
 assert.equal(metadata.height, format === 'portrait' ? 1350 : 1080);
 assert.equal(metadata.codec, 'h264');
-assert.equal(metadata.pixelFormat, 'yuv420p');
+// FFmpeg may report full-range 4:2:0 as yuvj420p.
+assert.ok(['yuv420p', 'yuvj420p'].includes(metadata.pixelFormat));
 assert.equal(metadata.fps, 30);
 assert.ok(Math.abs(metadata.durationInSeconds - framesFor(post) / 30) < 0.1);
 console.log(JSON.stringify(metadata, null, 2));
