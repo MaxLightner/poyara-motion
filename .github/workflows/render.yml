@@ -38,9 +38,7 @@ jobs:
       - name: Render video
         run: npm run render -- "posts/$POST" "$FORMAT" out/poyara.mp4
       - name: Verify video
-        run: |
-          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,pix_fmt -show_entries format=duration -of json out/poyara.mp4
-          test -s out/poyara.mp4
+        run: node scripts/verify.mjs out/poyara.mp4 "posts/$POST" "$FORMAT"
       - uses: actions/upload-artifact@v4
         with:
           name: poyara-${{ env.FORMAT }}-mp4

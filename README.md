@@ -20,6 +20,8 @@ Edit `posts/sample.json` or copy it to another JSON file. Scene duration control
 
 ## Download an MP4 without installing anything
 
+[Download the 13-second sample MP4](https://github.com/MaxLightner/poyara-motion/raw/refs/heads/main/samples/poyara-sample.mp4).
+
 Open **Actions → Render MP4 → Run workflow**, select the JSON filename and square/portrait. Once the run succeeds, open **Artifacts** and download the MP4 ZIP (GitHub sign-in may be required). Every push to main also renders the sample. Artifacts expire after 30 days; download before expiry or run again.
 
 GitHub stores the project; Remotion runs inside GitHub Actions to turn its code and JSON into a video. No separate Remotion account or hosted editor is needed for this workflow.
