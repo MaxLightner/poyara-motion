@@ -3,13 +3,13 @@ import {existsSync,mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {spawnSync} from 'node:child_process';
 const [project='mizato',output='out/mizato-explainer.mp4',format='landscape',props]=process.argv.slice(2);
-const compositions={mizato:{id:'MizatoExplainer',formats:['landscape']},poyara:{id:format==='portrait'?'PoyaraPortrait':'PoyaraSquare',formats:['square','portrait']}};
-if(!compositions[project])throw Error('Unknown project. Choose mizato or poyara.');
+const compositions={mizato:{id:'MizatoExplainer',formats:['landscape']},'mizato-flow':{id:'MizatoFlow',formats:['landscape']},poyara:{id:format==='portrait'?'PoyaraPortrait':'PoyaraSquare',formats:['square','portrait']}};
+if(!compositions[project])throw Error('Unknown project. Choose mizato, mizato-flow or poyara.');
 if(!compositions[project].formats.includes(format))throw Error('Unsupported format for '+project);
 if(!output.endsWith('.mp4'))throw Error('Output must have .mp4 extension');
 if(!existsSync('node_modules/@remotion/cli/remotion-cli.js'))throw Error('Run npm ci first');
-if(project==='mizato'){
- const g=spawnSync(process.execPath,['scripts/music.mjs'],{stdio:'inherit'});
+if(project==='mizato'||project==='mizato-flow'){
+ const g=spawnSync(process.execPath,[project==='mizato'?'scripts/music.mjs':'scripts/flow-music.mjs'],{stdio:'inherit'});
  if(g.status!==0)process.exit(g.status??1);
 }
 mkdirSync(resolve(output,'..'),{recursive:true});

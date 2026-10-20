@@ -69,3 +69,15 @@ POYARA is JSON driven with `statement` and `steps` scenes. Use `direction: "rtl"
 An agent/n8n can write POYARA post JSON, validate it, commit, and dispatch the render workflow. The Mizato film currently requires React scene code for new visual actions. Do not commit API keys, unreleased roadmap details, proprietary customer menus, or sensitive media: the repository, workflow logs and releases are public. Review Remotion's commercial license terms before production distribution.
 
 Generated videos go under ignored `out/` and are distributed as CI artifacts or GitHub releases, not stored alongside source code.
+
+## Mizato continuous-flow V2
+
+V2 is a distinct composition (`MizatoFlow`), preserving the original `MizatoExplainer` and POYARA video templates. It shows one persistent restaurant world rather than remounting self-contained slides. Animated UI panels ease in/out on top of the same background and move between customer, waiter, kitchen and manager.
+
+The story is paced as connected beats: waiter time, QR and simple ordering, food choice, waiter notification, order approval, customer status, post-service feedback, manager price/stock/discount edits and a unified end frame. No unverified promise of lower staffing requirements or numerical ROI is made. Statuses and pricing in the video are illustrative product demonstrations, not live data.
+
+The timeline and subtitles are in `src/projects/mizato/flow-script.json`; the visual direction and reusable panels are implemented in `src/projects/mizato/scenes/Flow.tsx`. To render:
+```sh
+npm run render:project -- mizato-flow out/mizato-flow-v2.mp4 landscape
+```
+The new GitHub Action `mizato-flow.yml` renders a Full-HD MP4, saves four proof frames and publishes a separate release tagged `mizato-flow-v2`. Soundtrack is independently synthesized for this version and contains no narration. The V1 release remains available.
