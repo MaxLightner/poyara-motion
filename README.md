@@ -33,3 +33,24 @@ DeepSeek or n8n can generate the same JSON structure, validate it with `postSche
 The schema bounds text and duration and checks that steps contain items. Brand animation is in `src/motion.tsx`; composition sizing is in `src/index.tsx`. Rendering uses the [official Remotion CLI](https://www.remotion.dev/docs/render) and [JSON input props](https://www.remotion.dev/docs/options/props).
 
 Remotion has its own [license and commercial terms](https://www.remotion.dev/license); review them for your organization. No license is granted here for POYARA branding.
+
+## Mizato: restaurant ordering explainer (Remotion)
+
+The repository also includes **MizatoExplainer**, a self-contained **1920×1080 / 30 fps / 50-second** animated Persian explainer. This is not the POYARA typography template. It shows a stylized restaurant, a QR scan, a mobile food menu, visual meal comparison, a contextual drink/dessert suggestion, and the waiter's order approval before kitchen confirmation. Food illustrations, phone mockups and character/environment elements are composed with SVG and CSS in Remotion.
+
+The film includes original, generated instrumental music but **no recorded narration**. Copy and prices are illustrative demo content, not connected to the production Mizato backend. The QR pattern in the animation is decorative and is not a working table QR.
+
+To preview locally:
+```sh
+npm ci
+node scripts/music.mjs
+npm run studio  # select MizatoExplainer
+```
+
+To render a 1080p MP4:
+```sh
+node scripts/music.mjs
+npx remotion render src/index.tsx MizatoExplainer out/mizato-explainer.mp4 --codec=h264 --pixel-format=yuv420p
+```
+
+[Render Mizato Explainer workflow](https://github.com/MaxLightner/poyara-motion/actions/workflows/mizato.yml) builds the video, provides a full-HD artifact with a proof frame, and publishes the public `mizato-preview-v1` release. The existing POYARA post workflow remains unchanged.
