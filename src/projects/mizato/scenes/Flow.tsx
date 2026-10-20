@@ -32,7 +32,7 @@ const Table:React.FC<{x:number;y:number;active?:boolean;f:number;tiny?:boolean}>
    <Shadow x={10} y={128} w={tiny?225:300}/>
    <div style={{position:'absolute',left:10,top:8,width:tiny?210:290,height:160,borderRadius:'50%',background:'linear-gradient(150deg,#f9edd5,#d8bb90)',border:'11px solid #ffffffa9',boxShadow:'9px 24px 0 #7c8c7f,20px 36px 36px #0003'}}/>
    {active?<><div style={{position:'absolute',left:125,top:53,width:62,height:75,background:'#fff',borderRadius:11,display:'grid',placeItems:'center',transform:'rotate(14deg)',boxShadow:'0 6px 12px #0002'}}><QR size={47}/></div>
-     {f>37*30&&<div style={{position:'absolute',left:35,top:15,transform:'rotate(9deg)'}}><Food kind="burger" size={110}/></div>}
+     {f>37*30&&<div style={{position:'absolute',left:35,top:15,transform:'rotate(9deg) scale('+E(f,37,39)+')',opacity:E(f,37,39)}}><Food kind="burger" size={110}/></div>}
    </>:<div style={{position:'absolute',left:44,top:17}}><Food kind="pizza" size={tiny?90:115}/></div>}
  </div>;
 
@@ -145,7 +145,7 @@ const OrderSignal:React.FC<{f:number}> = ({f}) => {
 const WaiterNotice:React.FC<{f:number}> = ({f}) => {
  const shown=visible(f,22.2,33.7,1);
  const confirmed=E(f,27.2,27.9);
- return <GlassCard style={{position:'absolute',left:230,top:176,width:510,padding:25,opacity:shown,transform:move(0,(1-E(f,22,23))*75,1),zIndex:16,direction:'rtl'}}>
+ return <GlassCard style={{position:'absolute',left:310,top:545,width:510,padding:25,opacity:shown,transform:move(0,(1-E(f,22,23))*75,1),zIndex:16,direction:'rtl'}}>
   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><P size={24} weight={900}>سفارش جدید</P><Tag dark>میز ۸</Tag></div>
   <div style={{borderTop:'1px solid #d9e6df',margin:'17px 0'}}/>
   <P size={20}>۱ × برگر مخصوص</P><P size={20}>۱ × لیموناد</P>
@@ -201,11 +201,17 @@ const ConnectedEnd:React.FC<{f:number}> = ({f})=>{
 };
 
 const Headlines:React.FC<{f:number}> = ({f}) =>
- <div style={{position:'absolute',right:75,top:168,width:705,zIndex:14,pointerEvents:'none'}}>
- {flowScript.beats.map((beat,i)=><div key={beat.id} style={{position:'absolute',left:0,top:0,opacity:visible(f,beat.from,beat.to,1),transform:'translateY('+((1-E(f,beat.from-.7,beat.from+.6))*32)+'px)',textAlign:'right',width:690}}>
+ <div style={{position:'absolute',inset:0,zIndex:14,pointerEvents:'none'}}>
+ {flowScript.beats.map((beat,i)=><div key={beat.id} style={{
+  position:'absolute',right:i===0?85:undefined,left:i>0?80:undefined,top:170,
+  width:i===0?720:655,boxSizing:'border-box',padding:i===0?0:'24px 28px',
+  borderRadius:26,background:i===0?'transparent':'linear-gradient(90deg,#082a32eb,#092e33a4 78%,#092e3314)',
+  opacity:visible(f,beat.from,beat.to,1),
+  transform:'translateY('+((1-E(f,beat.from-.8,beat.from+.65))*24)+'px)',
+  textAlign:'right'}}>
   <Tag>{beat.eyebrow}</Tag>
-  <P size={beat.title.length>42?38:49} color="#fff" weight={900} style={{marginTop:18,lineHeight:1.5}}>{beat.title}</P>
-  <P size={24} color="#bce3db" style={{marginTop:12,maxWidth:600,marginLeft:'auto'}}>{beat.subtitle}</P>
+  <P size={beat.title.length>42?38:47} color="#fff" weight={900} style={{marginTop:18,lineHeight:1.46,textShadow:'0 3px 16px #001d25bb'}}>{beat.title}</P>
+  <P size={22} color="#d4f2e9" style={{marginTop:12,maxWidth:610,marginLeft:'auto',textShadow:'0 2px 10px #001c20'}}>{beat.subtitle}</P>
  </div>)}
  </div>;
 const Footer:React.FC<{f:number}> = ({f})=>{
